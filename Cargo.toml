@@ -1,0 +1,23 @@
+[package]
+name = "lumenscan"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.84"
+description = "Inspect a deployed Soroban contract's interface and metadata from its WASM"
+repository = "https://github.com/cmoses/lumenscan"
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ["stellar", "soroban", "smart-contracts", "cli", "abi"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+clap = { version = "4.6", features = ["derive", "env"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+stellar-xdr = { version = "28.0.0", features = ["base64"] }
+thiserror = "2.0"
+ureq = { version = "3.4", features = ["json"] }
+wasmparser = "0.256"
+
+[profile.release]
+strip = true
