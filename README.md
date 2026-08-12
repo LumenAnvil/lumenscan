@@ -55,7 +55,7 @@ cargo install --path .
 Or build from source:
 
 ```console
-git clone https://github.com/cmoses/lumenscan
+git clone https://github.com/LumenAnvil/lumenscan
 cd lumenscan
 cargo build --release
 # binary at target/release/lumenscan

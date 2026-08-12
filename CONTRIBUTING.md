@@ -6,7 +6,7 @@ way: easy to read end to end, easy to extend at a few well-marked seams.
 ## Getting set up
 
 ```console
-git clone https://github.com/cmoses/lumenscan
+git clone https://github.com/LumenAnvil/lumenscan
 cd lumenscan
 make check      # fmt, clippy, tests
 ```
