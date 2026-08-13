@@ -233,4 +233,4 @@ Lumenscan reads.
 
 ## License
 
-Copyright 2026 lumenscan. Licensed under Apache-2.0; see [LICENSE](LICENSE).
+Copyright 2026 goodness-cpu. Licensed under Apache-2.0; see [LICENSE](LICENSE).
