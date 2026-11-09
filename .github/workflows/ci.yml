@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Format, lint, test and doc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable --profile minimal \
+            --component rustfmt --component clippy
+          rustup default stable
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-check-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-check-
+
+      # The same three checks `make check` runs locally, so a green pull request
+      # means the same thing a clean local checkout does.
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Test
+        run: cargo test
+
+      # The crate is a library as well as a binary, and its doc comments carry
+      # runnable examples; a broken intra-doc link or example should fail here.
+      - name: Documentation
+        run: cargo doc --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+  msrv:
+    name: Build on the declared MSRV (1.84)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Keeps the rust-version in Cargo.toml honest. Lumenscan is a native tool
+      # and is never compiled to wasm, so its floor is the plain Rust MSRV.
+      - name: Install Rust
+        run: |
+          rustup toolchain install 1.84 --profile minimal
+          rustup default 1.84
+
+      - name: Build
+        run: cargo build --all-targets
