@@ -9,6 +9,8 @@ the project aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Added
 
+- A `completions` subcommand that prints a shell completion script
+  (`bash`, `zsh`, `fish`, `elvish`, `powershell`) to stdout.
 - `--format markdown`, a Markdown renderer for a decoded interface, behind the
   same `Renderer` trait as the human and JSON output.
 - GitHub Actions CI: format, Clippy, tests and docs, plus a build on the
