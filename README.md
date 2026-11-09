@@ -46,6 +46,12 @@ for other tools (`lumenscan … --json`).
 
 It is strictly read-only. It does not deploy, invoke, or modify anything.
 
+## In the browser
+
+Prefer not to install anything? [`web/`](web) is Lumenscan as a static web app
+(TypeScript + React): paste a contract ID or drop in a `.wasm` file and see the
+same decoded interface. See [web/README.md](web/README.md).
+
 ## Install
 
 ```console
