@@ -36,6 +36,15 @@ enum Command {
         #[command(flatten)]
         options: Options,
     },
+
+    /// Print a shell completion script for the given shell to stdout.
+    ///
+    /// For example: `lumenscan completions bash > /etc/bash_completion.d/lumenscan`.
+    Completions {
+        /// The shell to generate completions for.
+        #[arg(value_enum)]
+        shell: clap_complete::Shell,
+    },
 }
 
 /// What to inspect: a deployed contract, or a local WASM file.
@@ -146,6 +155,7 @@ fn main() -> ExitCode {
 
 fn run(cli: Cli) -> Result<String> {
     match cli.command {
+        Some(Command::Completions { shell }) => Ok(completions(shell)),
         Some(Command::Meta { target, options }) => {
             require_target(&target);
             let (source, bytes) = target.load(&options.rpc_url)?;
@@ -163,6 +173,20 @@ fn run(cli: Cli) -> Result<String> {
             )
         }
     }
+}
+
+/// Render a completion script for `shell` as a string.
+///
+/// clap derives the completions from the same command definition the CLI runs,
+/// so they never drift from the real flags and subcommands.
+fn completions(shell: clap_complete::Shell) -> String {
+    use clap::CommandFactory;
+
+    let mut command = Cli::command();
+    let name = command.get_name().to_string();
+    let mut buffer: Vec<u8> = Vec::new();
+    clap_complete::generate(shell, &mut command, name, &mut buffer);
+    String::from_utf8(buffer).expect("completion scripts are valid UTF-8")
 }
 
 /// Exit with clap's own usage error when nothing was given to inspect.
@@ -258,5 +282,27 @@ mod tests {
         let cli =
             Cli::try_parse_from(["lumenscan", "CDLZ", "--rpc-url", "https://example.org"]).unwrap();
         assert_eq!(cli.options.rpc_url, "https://example.org");
+    }
+
+    #[test]
+    fn parses_the_completions_subcommand() {
+        let cli = Cli::try_parse_from(["lumenscan", "completions", "bash"]).unwrap();
+        let Some(Command::Completions { shell }) = cli.command else {
+            panic!("expected the completions subcommand");
+        };
+        assert_eq!(shell, clap_complete::Shell::Bash);
+    }
+
+    #[test]
+    fn rejects_an_unknown_shell() {
+        assert!(Cli::try_parse_from(["lumenscan", "completions", "crayon"]).is_err());
+    }
+
+    #[test]
+    fn generates_a_non_empty_script_naming_the_binary() {
+        let script = completions(clap_complete::Shell::Bash);
+        assert!(script.contains("lumenscan"), "script should name the binary");
+        // The meta and completions subcommands should appear in the script.
+        assert!(script.contains("meta"), "script should list subcommands");
     }
 }
