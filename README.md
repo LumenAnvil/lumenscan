@@ -61,7 +61,7 @@ cargo build --release
 # binary at target/release/lumenscan
 ```
 
-Requires Rust 1.84 or newer.
+Requires Rust 1.85 or newer.
 
 ## Usage
 

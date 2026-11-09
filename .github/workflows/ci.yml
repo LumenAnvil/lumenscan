@@ -53,17 +53,21 @@ jobs:
           RUSTDOCFLAGS: -D warnings
 
   msrv:
-    name: Build on the declared MSRV (1.84)
+    name: Build on the declared MSRV (1.85)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       # Keeps the rust-version in Cargo.toml honest. Lumenscan is a native tool
-      # and is never compiled to wasm, so its floor is the plain Rust MSRV.
+      # and is never compiled to wasm, so its floor is the plain Rust MSRV. The
+      # floor is 1.85 rather than 1.84 because a transitive dependency in the
+      # committed Cargo.lock uses the 2024 edition, stabilized in Rust 1.85.
       - name: Install Rust
         run: |
-          rustup toolchain install 1.84 --profile minimal
-          rustup default 1.84
+          rustup toolchain install 1.85 --profile minimal
+          rustup default 1.85
 
+      # --locked builds the exact dependency set in Cargo.lock, so this proves
+      # the committed lockfile compiles on the declared MSRV.
       - name: Build
-        run: cargo build --all-targets
+        run: cargo build --all-targets --locked

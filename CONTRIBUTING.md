@@ -11,7 +11,7 @@ cd lumenscan
 make check      # fmt, clippy, tests
 ```
 
-You need Rust 1.84 or newer. Nothing else — `cargo test` runs entirely offline against the
+You need Rust 1.85 or newer. Nothing else — `cargo test` runs entirely offline against the
 committed fixtures.
 
 Before opening a pull request:
