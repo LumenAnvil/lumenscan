@@ -78,6 +78,7 @@ lumenscan <CONTRACT_ID>                 # fetch from the network and print the i
 lumenscan --wasm <PATH>                 # same, from a local .wasm file (offline)
 lumenscan meta <CONTRACT_ID>            # print only the contract metadata
 lumenscan meta --wasm <PATH>
+lumenscan completions <SHELL>           # print a shell completion script to stdout
 ```
 
 Flags, valid on every command:
@@ -87,6 +88,16 @@ Flags, valid on every command:
 | `--format <FORMAT>` | `human` | Output format: `human`, `json`, or `markdown` |
 | `--json` | off | Shorthand for `--format json` (the two cannot be combined) |
 | `--rpc-url <URL>` | `https://soroban-testnet.stellar.org` | Stellar RPC endpoint |
+
+### Shell completions
+
+`lumenscan completions <SHELL>` prints a completion script for `bash`, `zsh`,
+`fish`, `elvish`, or `powershell` to stdout. For example:
+
+```console
+lumenscan completions bash > ~/.local/share/bash-completion/completions/lumenscan
+lumenscan completions zsh  > ~/.zfunc/_lumenscan        # ensure ~/.zfunc is on $fpath
+```
 
 ### Markdown output
 
