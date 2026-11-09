@@ -49,9 +49,10 @@ It is strictly read-only. It does not deploy, invoke, or modify anything.
 ## In the browser
 
 Prefer not to install anything? Lumenscan runs as a static web app at
-**<https://lumenanvil.github.io/lumenscan/>** (TypeScript + React): paste a
-contract ID or drop in a `.wasm` file and see the same decoded interface. The
-source is under [`web/`](web); see [web/README.md](web/README.md).
+**<https://lumenanvil.github.io/lumenscan-web/>** (TypeScript + React): paste a
+contract ID or drop in a `.wasm` file and see the same decoded interface. It
+lives in its own repository,
+[LumenAnvil/lumenscan-web](https://github.com/LumenAnvil/lumenscan-web).
 
 ## Install
 
