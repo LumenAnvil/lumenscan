@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 
-use lumenscan::output::{Human, Json, Renderer};
+use lumenscan::output::{Human, Json, Markdown, Renderer};
 use lumenscan::rpc::{parse_contract_id, RpcFetcher, WasmFetcher, DEFAULT_RPC_URL};
 use lumenscan::{Inspection, Result, Source};
 
@@ -50,23 +50,49 @@ struct Target {
     wasm: Option<PathBuf>,
 }
 
+/// Output format for a listing.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, ValueEnum)]
+enum Format {
+    /// Human-readable listing (the default).
+    #[default]
+    Human,
+    /// Machine-readable JSON; shape documented in the README.
+    Json,
+    /// Markdown document, for pasting into a README, issue, or API docs.
+    Markdown,
+}
+
 #[derive(Debug, Args)]
 struct Options {
     /// Stellar RPC endpoint used to fetch deployed contracts.
     #[arg(long, value_name = "URL", env = "LUMENSCAN_RPC_URL", default_value = DEFAULT_RPC_URL)]
     rpc_url: String,
 
-    /// Emit machine-readable JSON instead of a human-readable listing.
-    #[arg(long)]
+    /// Output format: human, json, or markdown.
+    #[arg(long, value_enum, default_value_t = Format::Human)]
+    format: Format,
+
+    /// Emit machine-readable JSON; a shorthand for `--format json`.
+    #[arg(long, conflicts_with = "format")]
     json: bool,
 }
 
 impl Options {
-    fn renderer(&self) -> Box<dyn Renderer> {
+    /// Resolve the chosen format, treating the `--json` shorthand as
+    /// `--format json`. clap guarantees the two flags are never combined.
+    fn format(&self) -> Format {
         if self.json {
-            Box::new(Json)
+            Format::Json
         } else {
-            Box::new(Human)
+            self.format
+        }
+    }
+
+    fn renderer(&self) -> Box<dyn Renderer> {
+        match self.format() {
+            Format::Human => Box::new(Human),
+            Format::Json => Box::new(Json),
+            Format::Markdown => Box::new(Markdown),
         }
     }
 }
@@ -189,6 +215,26 @@ mod tests {
     #[test]
     fn rejects_a_contract_id_together_with_wasm() {
         assert!(Cli::try_parse_from(["lumenscan", "CDLZ", "--wasm", "a.wasm"]).is_err());
+    }
+
+    #[test]
+    fn parses_an_explicit_format() {
+        let cli = Cli::try_parse_from(["lumenscan", "CDLZ", "--format", "markdown"]).unwrap();
+        assert_eq!(cli.options.format(), Format::Markdown);
+
+        let cli = Cli::try_parse_from(["lumenscan", "CDLZ"]).unwrap();
+        assert_eq!(cli.options.format(), Format::Human);
+    }
+
+    #[test]
+    fn json_shorthand_resolves_to_the_json_format() {
+        let cli = Cli::try_parse_from(["lumenscan", "CDLZ", "--json"]).unwrap();
+        assert_eq!(cli.options.format(), Format::Json);
+    }
+
+    #[test]
+    fn rejects_json_shorthand_combined_with_an_explicit_format() {
+        assert!(Cli::try_parse_from(["lumenscan", "CDLZ", "--json", "--format", "human"]).is_err());
     }
 
     #[test]

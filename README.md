@@ -76,8 +76,31 @@ Flags, valid on every command:
 
 | Flag | Default | Meaning |
 | --- | --- | --- |
-| `--json` | off | Emit the machine-readable document described below |
+| `--format <FORMAT>` | `human` | Output format: `human`, `json`, or `markdown` |
+| `--json` | off | Shorthand for `--format json` (the two cannot be combined) |
 | `--rpc-url <URL>` | `https://soroban-testnet.stellar.org` | Stellar RPC endpoint |
+
+### Markdown output
+
+`--format markdown` renders the same information as the default listing, but as a document you
+can paste straight into a README, a pull request, or generated API docs — a heading per section,
+each function as its full signature in inline code, and fields, variants, event parameters and
+metadata as tables:
+
+```console
+$ lumenscan --wasm my_contract.wasm --format markdown
+# my_contract.wasm
+
+## Functions (2)
+
+### `initialize(admin: Address)`
+
+### `transfer(from: Address, to: Address, amount: i128) -> Result<(), Error>`
+...
+```
+
+Unlike `--json`, the Markdown layout is a convenience for humans rather than a versioned
+contract, so it is free to change between releases.
 
 `--rpc-url` also reads the `LUMENSCAN_RPC_URL` environment variable, so you can point at mainnet
 or a private node once per shell:

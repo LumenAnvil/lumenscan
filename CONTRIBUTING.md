@@ -47,13 +47,14 @@ contract ID ──► rpc.rs ──► WASM bytes ──► wasm.rs ──► cu
 
 ### Adding an output format
 
-Implement [`Renderer`](src/output.rs) and wire it into the CLI's format selection in
-`Options::renderer` in [`src/main.rs`](src/main.rs). Nothing else needs to change:
+Implement [`Renderer`](src/output.rs), add a variant to the `Format` enum in
+[`src/main.rs`](src/main.rs), and extend the `match` in `Options::renderer`. Nothing else needs
+to change — the [`Markdown`](src/output.rs) renderer is a worked example to copy from:
 
 ```rust
-pub struct Markdown;
+pub struct Yaml;
 
-impl Renderer for Markdown {
+impl Renderer for Yaml {
     fn interface(&self, interface: &Interface, meta: &Meta, source: &Source) -> Result<String> {
         // ...
     }
