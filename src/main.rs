@@ -301,8 +301,8 @@ mod tests {
     #[test]
     fn generates_a_non_empty_script_naming_the_binary() {
         let script = completions(clap_complete::Shell::Bash);
-        assert!(script.contains("lumenscan"), "script should name the binary");
-        // The meta and completions subcommands should appear in the script.
-        assert!(script.contains("meta"), "script should list subcommands");
+        // The script should name the binary and list its subcommands.
+        assert!(script.contains("lumenscan"));
+        assert!(script.contains("meta"));
     }
 }
