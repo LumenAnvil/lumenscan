@@ -59,11 +59,18 @@ contract ID ─▶ contract.Client.from ─┐
 
 ## Deploy
 
-`npm run build` emits a static `dist/`. For a project site served from a
-sub-path (GitHub Pages, say), set the base path at build time:
+Pushing a change under `web/` to `main` builds and publishes the app to GitHub
+Pages automatically — see [`.github/workflows/pages.yml`](../.github/workflows/pages.yml).
+The live site is:
+
+**<https://lumenanvil.github.io/lumenscan/>**
+
+`npm run build` emits a static `dist/` you can host anywhere. For a project site
+served from a sub-path, set the base path at build time so assets resolve under
+it (the Pages workflow passes `/lumenscan/`):
 
 ```bash
-BASE_PATH=/lumenscan-web/ npm run build
+BASE_PATH=/lumenscan/ npm run build
 ```
 
 ## Scope and next steps
