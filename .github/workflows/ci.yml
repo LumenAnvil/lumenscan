@@ -17,7 +17,7 @@ jobs:
     name: Format, lint, test and doc
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         run: |
@@ -25,7 +25,7 @@ jobs:
             --component rustfmt --component clippy
           rustup default stable
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -56,7 +56,7 @@ jobs:
     name: Build on the declared MSRV (1.85)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Keeps the rust-version in Cargo.toml honest. Lumenscan is a native tool
       # and is never compiled to wasm, so its floor is the plain Rust MSRV. The
